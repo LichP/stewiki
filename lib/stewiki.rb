@@ -4,9 +4,17 @@ require 'redcarpet'
 
 module Stewiki
   @@renderers = {}
+  
+  def self.content(page_name)
+    Page[page_name].content
+  end
 
   def self.render(page_name, opts)
-    Page.new(page_name).render_with(renderer(opts[:renderer]))
+    Page[page_name].render_with(renderer(opts[:renderer]))
+  end
+  
+  def self.update(page_name, new_content)
+    Page[page_name].update(new_content)
   end
   
   def self.renderer(renderer_sym)
@@ -19,6 +27,14 @@ module Stewiki
   class Page
     attr_reader :name
   
+    def self.get(attrs)
+      new(attrs)
+    end
+    
+    def self.[](name)
+      get(name)
+    end
+
     def initialize(name)
       @name = name
     end
@@ -33,6 +49,12 @@ module Stewiki
     
     def render_with(renderer)
       renderer.render(content)
+    end
+    
+    def update(new_content)
+      File.open("/home/pstewart/.stewiki/wikidata/pages/#{name[0].upcase}/#{name}", "w") do |page_file|
+        page_file.write(new_content)
+      end
     end
   end
 end

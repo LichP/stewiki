@@ -5,12 +5,22 @@ require 'sinatra'
 set :root, File.dirname(__FILE__)  + '/../lib/stewiki/server'
 
 get "/" do
-  redirect to('page/Home')
+  redirect to('/page/Home')
 end
 
 get "/page/:pagename" do
   @title = params[:pagename]
-  @page_name = @title
   @content = Stewiki.render(params[:pagename], :renderer => :html)
-  haml :default
+  haml :display
+end
+
+get "/edit/:pagename" do
+  @title = "Editing: " + params[:pagename]
+  @content = Stewiki.content(params[:pagename])
+  haml :edit
+end
+
+post "/edit/:pagename" do
+  Stewiki.update(params[:pagename], params[:content])
+  redirect to("/page/" + params[:pagename])
 end

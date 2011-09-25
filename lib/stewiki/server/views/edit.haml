@@ -1,0 +1,6 @@
+.contentarea
+  %form{:action => url("/edit/" + params[:pagename]), :method => "POST"}
+    %p
+      %textarea#content{:rows => "20", :cols => "80", :name => "content"}= @content
+    %p
+      %input{:type => "submit", :value =>  "Save"}
