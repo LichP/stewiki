@@ -1,9 +1,25 @@
 #!/usr/bin/env ruby
 
 require 'redcarpet'
+require 'git'
 
 module Stewiki
   @@renderers = {}
+  @@git = nil
+  #@@path = "~/.stewiki"
+  @@path = "/home/pstewart/.stewiki"
+  
+  def self.path
+    @@path
+  end
+  
+  def self.repo_path
+    @@path + "/wikidata"
+  end
+  
+  def self.git
+    @@git ||= Git.open(repo_path)
+  end
   
   def self.content(page_name)
     Page[page_name].content
@@ -24,6 +40,7 @@ module Stewiki
     end
   end
   
+  
   class Page
     attr_reader :name
   
@@ -41,7 +58,7 @@ module Stewiki
     
     def content
       begin
-        File.read("/home/pstewart/.stewiki/wikidata/pages/#{name[0].upcase}/#{name}")
+        File.read(page_path)
       rescue IOError, error
         "Content not available: #{error.message}"
       end
@@ -52,9 +69,15 @@ module Stewiki
     end
     
     def update(new_content)
-      File.open("/home/pstewart/.stewiki/wikidata/pages/#{name[0].upcase}/#{name}", "w") do |page_file|
+      File.open(page_path, "w") do |page_file|
         page_file.write(new_content)
       end
+      Stewiki.git.add(page_path)
+      Stewiki.git.commit("Page edit of #{name}")
+    end
+    
+    def page_path
+      Stewiki.repo_path + "/pages/" + name[0].upcase + "/" + name
     end
   end
 end
