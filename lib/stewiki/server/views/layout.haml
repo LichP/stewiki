@@ -1,0 +1,12 @@
+!!!
+%html{html_attrs(lang = 'en-GB')}
+
+%head
+  %title= @title
+  %link{:rel => "stylesheet", :type => "text/css", :href => url("/style/main.css")}
+
+%body
+  = haml :titlebar
+  = haml :sidebar
+
+  = yield

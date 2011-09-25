@@ -12,7 +12,7 @@ module Stewiki
   def self.renderer(renderer_sym)
     @@renderers[renderer_sym] ||= case renderer_sym
       when :html
-        Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+        Redcarpet::Markdown.new(Redcarpet::Render::HTML, :fenced_code_blocks => true)
     end
   end
   
