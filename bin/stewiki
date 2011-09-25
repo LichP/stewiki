@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+require File.dirname(__FILE__) + '/../lib/stewiki'
+require 'sinatra'
+
+get "/" do
+  redirect to('page/Home')
+end
+
+get "/page/:pagename" do
+  Stewiki.render(params[:pagename], :renderer => :html)
+end

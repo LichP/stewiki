@@ -1,0 +1,11 @@
+# Stewiki: A personal wiki app
+
+This is a personal wiki app written for my own use. Wiki pages are written
+in Markdown, rendered with Redcarpet, viewed with Sinatra, and version
+controlled with Git. At least, that's the plan :-)
+
+--
+Phil Stewart
+September 2011
+
+
