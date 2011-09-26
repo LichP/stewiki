@@ -8,19 +8,18 @@ module Stewiki
   @@renderers = {}
   @@git = nil
   #@@path = "~/.stewiki"
-  @@path = "/home/pstewart/.stewiki"
-  ## GOT TO HERE: Need to start using VFS and implement mkdir -p on Page#update
+  @@path = "/home/pstewart/.stewiki".to_dir
   
   def self.path
     @@path
   end
   
   def self.repo_path
-    @@path + "/wikidata"
+    @@path['wikidata']
   end
   
   def self.git
-    @@git ||= Git.open(repo_path)
+    @@git ||= Git.open(repo_path.path)
   end
   
   def self.content(page_name)
@@ -59,12 +58,10 @@ module Stewiki
     end
     
     def content
-      begin
-        File.read(page_path)
-      rescue Errno::ENOENT
+      if page_file.exist?
+        page_file.read
+      else
         "# #{name}\nThis page does not exist yet."
-      rescue IOError => error
-        "Content not available: #{error.message}"
       end
     end
     
@@ -73,16 +70,13 @@ module Stewiki
     end
     
     def update(new_content)
-      File.open(page_path, "w") do |page_file|
-        page_file.write(new_content)
-      end
-      Stewiki.git.add(page_path)
+      page_file.write(new_content)
+      Stewiki.git.add(page_file.path)
       Stewiki.git.commit("Page edit of #{name}")
     end
     
-    def page_path
-      
-      Stewiki.repo_path + "/pages/" + name[0].upcase + "/" + name
+    def page_file      
+      Stewiki.repo_path["pages/#{name[0].upcase}/#{name}"]
     end
   end
   
