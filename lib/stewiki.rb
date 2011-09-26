@@ -2,12 +2,14 @@
 
 require 'redcarpet'
 require 'git'
+require 'vfs'
 
 module Stewiki
   @@renderers = {}
   @@git = nil
   #@@path = "~/.stewiki"
   @@path = "/home/pstewart/.stewiki"
+  ## GOT TO HERE: Need to start using VFS and implement mkdir -p on Page#update
   
   def self.path
     @@path
@@ -36,7 +38,7 @@ module Stewiki
   def self.renderer(renderer_sym)
     @@renderers[renderer_sym] ||= case renderer_sym
       when :html
-        Redcarpet::Markdown.new(Redcarpet::Render::HTML, :fenced_code_blocks => true)
+        Redcarpet::Markdown.new(RenderHTMLWithWikiLinks, :fenced_code_blocks => true)
     end
   end
   
@@ -59,7 +61,9 @@ module Stewiki
     def content
       begin
         File.read(page_path)
-      rescue IOError, error
+      rescue Errno::ENOENT
+        "# #{name}\nThis page does not exist yet."
+      rescue IOError => error
         "Content not available: #{error.message}"
       end
     end
@@ -77,7 +81,14 @@ module Stewiki
     end
     
     def page_path
+      
       Stewiki.repo_path + "/pages/" + name[0].upcase + "/" + name
+    end
+  end
+  
+  class RenderHTMLWithWikiLinks < Redcarpet::Render::HTML
+    def postprocess(document)
+      document.gsub(/\[(\w+)\]/m, '<a href="/page/\1">\1</a>')
     end
   end
 end
