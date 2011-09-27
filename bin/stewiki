@@ -10,12 +10,17 @@ end
 
 get "/page/:pagename" do
   @title = params[:pagename]
+  @page_last_modified = Stewiki::Page[params[:pagename]].last_modified || "Never"
+  @page_last_commit = Stewiki::Page[params[:pagename]].last_commit.to_s[0..7] || "N/A"
   @content = Stewiki.render(params[:pagename], :renderer => :html)
   haml :display
 end
 
 get "/edit/:pagename" do
   @title = "Editing: " + params[:pagename]
+  ## DUPLICATION - refactor
+  @page_last_modified = Stewiki::Page[params[:pagename]].last_modified || "Never"
+  @page_last_commit = Stewiki::Page[params[:pagename]].last_commit.to_s[0..7] || "N/A"
   @content = Stewiki.content(params[:pagename])
   haml :edit
 end

@@ -78,6 +78,18 @@ module Stewiki
     def page_file      
       Stewiki.repo_path["pages/#{name[0].upcase}/#{name}"]
     end
+    
+    def log
+      Stewiki.git.log.object(page_file.path)
+    end
+    
+    def last_commit
+      log.first
+    end
+    
+    def last_modified
+      log.first.date
+    end
   end
   
   class RenderHTMLWithWikiLinks < Redcarpet::Render::HTML

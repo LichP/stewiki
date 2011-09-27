@@ -32,7 +32,16 @@ h1
   margin: 0;
   padding-top: 5px;
   text-align: right;
+  font-size: 0.9em;
 }
+
+.titlebar .lowerfloat
+{
+  margin: 0;
+  float: left;
+  text-align: left;
+}
+
 
 .sidebar
 {
