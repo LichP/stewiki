@@ -54,3 +54,24 @@ h1
 {
   margin-left: 200px;
 }
+
+.editform
+{
+  display: inline-block;
+}
+
+.editform .commitfield
+{
+  float: left;
+}
+
+.editform input#commit_message
+{
+  width: 400px;
+}
+
+.editform .savebutton
+{
+  float: right;
+}
+

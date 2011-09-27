@@ -18,14 +18,16 @@ end
 
 get "/edit/:pagename" do
   @title = "Editing: " + params[:pagename]
-  ## DUPLICATION - refactor
-  @page_last_modified = Stewiki::Page[params[:pagename]].last_modified || "Never"
-  @page_last_commit = Stewiki::Page[params[:pagename]].last_commit.to_s[0..7] || "N/A"
-  @content = Stewiki.content(params[:pagename])
+  ## REFACTOR: Passing in variables to templates
+  page = Stewiki::Page[params[:pagename]]
+  @page_last_modified = page.last_modified || "Never"
+  @page_last_commit = page.last_commit.to_s[0..7] || "N/A"
+  @content = page.content
+  @commit_message = page.default_commit_message
   haml :edit
 end
 
 post "/edit/:pagename" do
-  Stewiki.update(params[:pagename], params[:content])
+  Stewiki.update(params[:pagename], params[:content], params[:commit_message])
   redirect to("/page/" + params[:pagename])
 end

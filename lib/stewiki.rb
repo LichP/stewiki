@@ -27,11 +27,12 @@ module Stewiki
   end
 
   def self.render(page_name, opts)
+    ## REFACTOR: Migrate this to an instance method in Page and remove this wrapping interface
     Page[page_name].render_with(renderer(opts[:renderer]))
   end
   
-  def self.update(page_name, new_content)
-    Page[page_name].update(new_content)
+  def self.update(page_name, new_content, commit_message)
+    Page[page_name].update(new_content, commit_message)
   end
   
   def self.renderer(renderer_sym)
@@ -69,10 +70,10 @@ module Stewiki
       renderer.render(content)
     end
     
-    def update(new_content)
+    def update(new_content, commit_message = default_commit_message)
       page_file.write(new_content)
       Stewiki.git.add(page_file.path)
-      Stewiki.git.commit("Page edit of #{name}")
+      Stewiki.git.commit(commit_message)
     end
     
     def page_file      
@@ -89,6 +90,10 @@ module Stewiki
     
     def last_modified
       log.first.date
+    end
+    
+    def default_commit_message
+      "Page edit of #{name}"
     end
   end
   
