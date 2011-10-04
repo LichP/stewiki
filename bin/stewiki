@@ -29,3 +29,10 @@ post "/edit/:pagename" do
   Stewiki::Page[params[:pagename]].update(params[:content], params[:commit_message])
   redirect to("/page/" + params[:pagename])
 end
+
+get "/history/:pagename" do
+  @title = "History: " + params[:pagename]
+  @page = Stewiki::Page[params[:pagename]]
+  @quicklinks = Stewiki::Page["QuickLinks"]
+  haml :history
+end

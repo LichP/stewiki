@@ -12,7 +12,12 @@ p, ul, code
 
 h1
 {
-  font-size: 2.0em;
+  font-size: 2.1em;
+}
+
+h2
+{
+  font-size: 1.6em;
 }
 
 .titlebar
