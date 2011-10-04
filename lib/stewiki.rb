@@ -1,47 +1,37 @@
 #!/usr/bin/env ruby
 
 require 'redcarpet'
-require 'git'
+require 'grit'
 require 'vfs'
 
 module Stewiki
-  @@renderers = {}
-  @@git = nil
-  #@@path = "~/.stewiki"
-  @@path = "/home/pstewart/.stewiki".to_dir
+  @renderers = {}
+  @git = nil
+  #@path = "~/.stewiki"
+  @path = "/home/pstewart/.stewiki".to_dir
   
   def self.path
-    @@path
+    @path
   end
   
   def self.repo_path
-    @@path['wikidata']
+    @path['wikidata']
   end
   
-  def self.git
-    @@git ||= Git.open(repo_path.path)
+  def self.repo
+    @repo ||= Grit::Repo.new(repo_path.path)
   end
   
-  def self.content(page_name)
-    Page[page_name].content
-  end
-
-  def self.render(page_name, opts)
-    ## REFACTOR: Migrate this to an instance method in Page and remove this wrapping interface
-    Page[page_name].render_with(renderer(opts[:renderer]))
-  end
-  
-  def self.update(page_name, new_content, commit_message)
-    Page[page_name].update(new_content, commit_message)
+  def self.actor
+    Grit::Actor.new('Phil Stewart', 'phil.stewart@lichp.co.uk')
   end
   
   def self.renderer(renderer_sym)
-    @@renderers[renderer_sym] ||= case renderer_sym
+    @renderers[renderer_sym] ||= case renderer_sym
       when :html
         Redcarpet::Markdown.new(RenderHTMLWithWikiLinks, :fenced_code_blocks => true)
     end
   end
-  
   
   class Page
     attr_reader :name
@@ -58,12 +48,20 @@ module Stewiki
       @name = name
     end
     
+    def blob
+      Stewiki.repo.tree/(page_file)
+    end
+    
     def content
-      if page_file.exist?
-        page_file.read
-      else
-        "# #{name}\nThis page does not exist yet."
-      end
+      blob ? blob.data : "This page does not exist yet."
+    end
+    
+    def titled?
+      content =~ /^#/
+    end
+    
+    def render(opts = {})
+      render_with(Stewiki.renderer(opts[:renderer] || :html))
     end
     
     def render_with(renderer)
@@ -71,25 +69,26 @@ module Stewiki
     end
     
     def update(new_content, commit_message = default_commit_message)
-      page_file.write(new_content)
-      Stewiki.git.add(page_file.path)
-      Stewiki.git.commit(commit_message)
+      index = Stewiki.repo.index
+      index.read_tree('master')
+      index.add(page_file, new_content)
+      index.commit(commit_message, [Stewiki.repo.commits.first], Stewiki.actor, nil, 'master')
     end
     
-    def page_file      
-      Stewiki.repo_path["pages/#{name[0].upcase}/#{name}"]
+    def page_file
+      "pages/#{name[0].upcase}/#{name}"
     end
     
-    def log
-      Stewiki.git.log.object(page_file.path)
-    end
-    
-    def last_commit
-      log.first
+    def commits
+      Stewiki.repo.log('master', page_file)
     end
     
     def last_modified
-      log.first.date
+      commits.length > 0 ? commits.first.authored_date : "Never"
+    end
+    
+    def last_commit_abbrev
+      commits.length > 0 ? commits.first.id_abbrev : "N/A"
     end
     
     def default_commit_message

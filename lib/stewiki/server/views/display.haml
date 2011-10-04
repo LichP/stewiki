@@ -1,2 +1,4 @@
 .contentarea
-  ~ @content
+  - unless @page.titled?
+    %h1= @title
+  ~ @page.render

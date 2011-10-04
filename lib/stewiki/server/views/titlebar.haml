@@ -3,6 +3,6 @@
   .lower
     .lowerfloat
       %a{:href => url("/page/Home")} Home
-    Last modified #{@page_last_modified} commit #{@page_last_commit}
+    Last modified #{@page.last_modified} commit #{@page.last_commit_abbrev}
     |
     %a{:href => url("/edit/#{params[:pagename]}")} Edit
