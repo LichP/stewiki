@@ -1,0 +1,5 @@
+.contentarea
+  %h1= @title
+  - @page.commits.each do |commit|
+    %h3 #{commit.authored_date} (#{commit.id_abbrev})
+    %p= commit.message
