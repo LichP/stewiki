@@ -55,6 +55,27 @@ h2
   margin: 10px;
 }
 
+.sidebarbox
+{
+  border: 1px solid #202020;
+  padding: 4px;
+  margin-bottom: 1em;
+}
+
+.sidebarbox *:first-child {
+  margin-top: 0;
+}
+
+.sidebarbox *:last-child {
+  margin-bottom: 0;
+}
+
+.quicklinks ul
+{
+  margin-left: 0;
+  padding-left: 1.5em;
+}
+
 .contentarea
 {
   margin-left: 200px;

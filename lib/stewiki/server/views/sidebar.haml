@@ -1,8 +1,10 @@
 .sidebar
-  %h4 Quick Links
-  .quicklinks
-    = @quicklinks.render
-    %a{:href => url("/edit/QuickLinks")} Edit
-  %h4 Quick Note
-  .quicknotes
+  .sidebarbox
+    %h4 Quick Links
+    .quicklinks
+      = @quicklinks.render
+      %a{:href => url("/edit/QuickLinks")} Edit
+  .sidebarbox
+    %h4 Quick Note
+    .quicknotes
 
