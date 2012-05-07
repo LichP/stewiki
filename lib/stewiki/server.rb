@@ -12,10 +12,11 @@ class Stewiki::Server < Sinatra::Base
     redirect to('/page/Home')
   end
 
-  get "/page/:pagename" do
+  get "/page/:pagename/?:commit?" do
     @title = params[:pagename]
     @page = Stewiki::Page[params[:pagename]]
     @quicklinks = Stewiki::Page["QuickLinks"]
+    @page.version = params[:commit] if params[:commit]
     haml :display
   end
 

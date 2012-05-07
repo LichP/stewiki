@@ -31,7 +31,8 @@ module Stewiki
   end
 
   class Page
-    attr_reader :name
+    attr_reader   :name
+    attr_accessor :version
   
     def self.get(attrs)
       new(attrs)
@@ -41,16 +42,34 @@ module Stewiki
       get(name)
     end
 
-    def initialize(name)
+    def initialize(name, version = :current)
       @name = name
+      @version = version
+    end
+    
+    def current?
+      version == :current
     end
     
     def blob
-      Stewiki.repo.tree/(page_file)
+      if current?
+        Stewiki.repo.tree/(page_file)
+      else
+        commit = Stewiki.repo.commits(version).first
+        commit ? commit.tree/(page_file) : nil
+      end
     end
     
     def content
-      blob ? blob.data : "This page does not exist yet."
+      if blob
+        blob.data
+      else
+        if current?
+          "This page does not exist yet."
+        else
+          "This page not found in commit #{version}."
+        end
+      end
     end
     
     def titled?
@@ -86,6 +105,14 @@ module Stewiki
     
     def last_commit_abbrev
       commits.length > 0 ? commits.first.id_abbrev : "N/A"
+    end
+    
+    def selected_version_commit
+      if current?
+        commits.first
+      else
+        Stewiki.repo.commits(version).first
+      end
     end
     
     def default_commit_message

@@ -1,4 +1,10 @@
 .contentarea
   - unless @page.titled?
     %h1= @title
+  - unless @page.current?
+    %p
+      %i
+        Version #{@page.selected_version_commit.id_abbrev},
+        authored #{@page.selected_version_commit.authored_date}
+        by #{@page.selected_version_commit.author.name}
   ~ @page.render
