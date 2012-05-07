@@ -2,28 +2,25 @@
 
 require 'redcarpet'
 require 'grit'
-require 'vfs'
 
 module Stewiki
   @renderers = {}
-  @git = nil
-  #@path = "~/.stewiki"
-  @path = "/home/pstewart/.stewiki".to_dir
+  @repo_path_default = File.join(ENV['HOME'], ".stewiki/wikidata.git")
   
   def self.path
     @path
   end
   
   def self.repo_path
-    @path['wikidata']
+    @repo_path_default
   end
   
   def self.repo
-    @repo ||= Grit::Repo.new(repo_path.path)
+    @repo ||= Grit::Repo.new(repo_path)
   end
   
-  def self.actor
-    Grit::Actor.new('Phil Stewart', 'phil.stewart@lichp.co.uk')
+  def self.actor(user = self.repo.config['user.name'], email = self.repo.config['user.email'])
+    Grit::Actor.new(user, email)
   end
   
   def self.renderer(renderer_sym)
@@ -32,7 +29,7 @@ module Stewiki
         Redcarpet::Markdown.new(RenderHTMLWithWikiLinks, :fenced_code_blocks => true)
     end
   end
-  
+
   class Page
     attr_reader :name
   
