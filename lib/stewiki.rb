@@ -115,6 +115,18 @@ module Stewiki
       end
     end
     
+    def selected_version_id_abbrev
+      selected_version_commit ? selected_version_commit.id_abbrev : "N/A"
+    end
+    
+    def selected_version_authored_date
+      selected_version_commit ? selected_version_commit.authored_date : "Unknown"
+    end
+    
+    def selected_version_author
+      selected_version_commit ? selected_version_commit.author.name : "Unknown"
+    end
+    
     def default_commit_message
       "Page edit of #{name}"
     end
