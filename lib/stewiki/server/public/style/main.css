@@ -81,6 +81,15 @@ h2
   margin-left: 200px;
 }
 
+p.version
+{
+  margin-top: 20px;
+  padding: 4px;
+  border: 1px dotted #202020;
+  background-color: #eee;
+  font-style: italic;
+}
+
 .editform
 {
   display: inline-block;
