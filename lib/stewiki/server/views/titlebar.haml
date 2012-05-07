@@ -5,6 +5,8 @@
       %a{:href => url("/page/Home")} Home
     Last modified: #{@page.last_modified}; Commit: #{@page.last_commit_abbrev}
     |
-    %a{:href => url("/history/#{params[:pagename]}")} History
+    %a{:href => url("/page/#{params[:pagename]}")} Read
     |
     %a{:href => url("/edit/#{params[:pagename]}")} Edit
+    |
+    %a{:href => url("/history/#{params[:pagename]}")} History
