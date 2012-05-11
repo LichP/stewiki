@@ -7,10 +7,6 @@ module Stewiki
   @renderers = {}
   @repo_path_default = File.join(ENV['HOME'], ".stewiki/wikidata.git")
   
-  def self.path
-    @path
-  end
-  
   def self.repo_path
     @repo_path_default
   end
@@ -29,7 +25,7 @@ module Stewiki
         Redcarpet::Markdown.new(RenderHTMLWithWikiLinks, :fenced_code_blocks => true)
     end
   end
-
+  
   class Page
     attr_reader   :name
     attr_accessor :version
