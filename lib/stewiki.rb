@@ -32,20 +32,26 @@ module Stewiki
     attr_accessor :crypted_password
     include Shield::Model
     
-    def self.fetch(email)
-      user_blob = Stewiki.repo.tree/("users/#{email}")
-      if user_blob
-        blob_data = JSON.parse(user_blob.data)
-        self.new(*blob_data)
-      else
-        nil
+    class << self
+      def fetch(email)
+        user_blob = Stewiki.repo.tree/("users/#{email}")
+        if user_blob
+          blob_data = JSON.parse(user_blob.data)
+          self.new(*blob_data)
+        else
+          nil
+        end
       end
+      
+      alias_method :'[]', :fetch
     end
     
     def initialize(name, email, crypted_password = "")
       super(name, email)
       @crypted_password = crypted_password
     end
+    
+    alias_method :id, :email
     
     def save
       index = Stewiki.repo.index
