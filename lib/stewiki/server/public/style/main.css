@@ -20,16 +20,23 @@ h2
   font-size: 1.6em;
 }
 
-.titlebar
+.login_content form p
+{
+  margin: 0px; 5px;
+}
+
+.titlebar, .login_content
 {
   margin: 10px;
 }
 
-.titlebar .upper
+.titlebar .upper, h2.login_title
 {
   margin: 0;
   padding-bottom: 5px;
   border-bottom: 1px solid #202020;
+  font-size: 1em;
+  font-weight: bold;
 }
 
 .titlebar .lower
@@ -46,7 +53,6 @@ h2
   float: left;
   text-align: left;
 }
-
 
 .sidebar
 {

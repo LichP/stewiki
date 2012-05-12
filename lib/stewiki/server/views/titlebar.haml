@@ -1,8 +1,16 @@
 .titlebar
-  .upper Stewiki: A personal wiki
+  %h2.upper Stewiki: A personal wiki
   .lower
     .lowerfloat
       %a{:href => url("/page/Home")} Home
+      |
+      - if @user
+        Logged in as #{@user.name}
+        |
+        %a{:href => url("/logout")} Logout
+      - else
+        %a{:href => url("/login")} Login
+      
     Last modified: #{@page.last_modified}; Commit:
     %a{:href => url("/page/#{params[:pagename]}/#{@page.last_commit_abbrev}")}= @page.last_commit_abbrev
     |

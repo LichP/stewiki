@@ -1,0 +1,19 @@
+!!!
+%html{html_attrs(lang = 'en-GB')}
+
+%head
+  %title Stewiki Login
+  %link{:rel => "stylesheet", :type => "text/css", :href => url("/style/main.css")}
+
+%body
+  .login_content
+    %h2.login_title Stewiki: A personal wiki
+    %h1 Login
+
+    %form{:action => "/login", :method => "post"}
+      %p
+        %input{:type => "text", :name => "login", :placeholder => "Email"}
+      %p
+        %input{:type => "password", :name => "password", :placeholder => "Password"}
+      %p
+        %input{:type => "submit", :name => "Proceed", :value => "Login"}
