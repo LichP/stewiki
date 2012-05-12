@@ -17,7 +17,7 @@ module Stewiki
     @repo ||= Grit::Repo.new(repo_path)
   end
   
-  def self.actor(user = self.repo.config['user.name'], email = self.repo.config['user.email'])
+  def self.default_actor(user = self.repo.config['user.name'], email = self.repo.config['user.email'])
     Grit::Actor.new(user, email)
   end
   
@@ -119,11 +119,11 @@ module Stewiki
       renderer.render(content)
     end
     
-    def update(new_content, commit_message = default_commit_message)
+    def update(new_content, commit_message = default_commit_message, user = Stewiki.default_actor)
       index = Stewiki.repo.index
       index.read_tree('master')
       index.add(page_file, new_content)
-      index.commit(commit_message, [Stewiki.repo.commits.first], Stewiki.actor, nil, 'master')
+      index.commit(commit_message, [Stewiki.repo.commits.first], user, nil, 'master')
     end
     
     def page_file
