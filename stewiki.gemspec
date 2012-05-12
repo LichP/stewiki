@@ -23,4 +23,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "sinatra", "~> 1.2"
   s.add_dependency "grit", "~> 2.4"
+  s.add_dependency "redcarpet", "~> 1.17"
+  s.add_dependency "shield", "~> 0.1"
 end
