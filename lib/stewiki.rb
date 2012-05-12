@@ -2,6 +2,8 @@
 
 require 'redcarpet'
 require 'grit'
+require 'json'
+require 'shield'
 
 module Stewiki
   @renderers = {}
@@ -23,6 +25,37 @@ module Stewiki
     @renderers[renderer_sym] ||= case renderer_sym
       when :html
         Redcarpet::Markdown.new(RenderHTMLWithWikiLinks, :fenced_code_blocks => true)
+    end
+  end
+  
+  class User < Grit::Actor
+    attr_accessor :crypted_password
+    include Shield::Model
+    
+    def self.fetch(email)
+      user_blob = Stewiki.repo.tree/("users/#{email}")
+      if user_blob
+        blob_data = JSON.parse(user_blob.data)
+        self.new(*blob_data)
+      else
+        nil
+      end
+    end
+    
+    def initialize(name, email, crypted_password = "")
+      super(name, email)
+      @crypted_password = crypted_password
+    end
+    
+    def save
+      index = Stewiki.repo.index
+      index.read_tree('master')
+      index.add("users/#{self.email}", self.to_json)
+      index.commit("Update user: #{self.email}", [Stewiki.repo.commits.first], self, nil, 'master')
+    end
+    
+    def to_json
+      [self.name, self.email, self.crypted_password].to_json
     end
   end
   
