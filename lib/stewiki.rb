@@ -29,39 +29,71 @@ module Stewiki
   end
   
   class User < Grit::Actor
-    attr_accessor :crypted_password
+    attr_accessor :crypted_password, :credentials
     include Shield::Model
     
     class << self
       def fetch(email)
         user_blob = Stewiki.repo.tree/("users/#{email}")
-        if user_blob
-          blob_data = JSON.parse(user_blob.data)
-          self.new(*blob_data)
-        else
-          nil
-        end
+        user_blob ? self.new_from_blob(user_blob) : nil
       end
       
       alias_method :'[]', :fetch
+      
+      def new_from_blob(blob)
+        blob_data = JSON.parse(blob.data)
+        self.new(*blob_data)
+      end
+      
+      def all
+        user_tree = Stewiki.repo.tree./("users").contents
+        user_tree.reject! { |child| !child.kind_of?(Grit::Blob) }
+        user_tree.collect { |blob| self.new_from_blob(blob) }
+      end
     end
     
-    def initialize(name, email, crypted_password = "")
+    def initialize(name, email, crypted_password = "", credentials = ['edit'])
       super(name, email)
       @crypted_password = crypted_password
+      @credentials = credentials
     end
     
     alias_method :id, :email
+
+    def can_edit?
+      self.credentials.include?('edit')
+    end
     
-    def save
+    def is_admin?
+      self.credentials.include?('admin') || self.is_superuser?
+    end
+    
+    def is_superuser?
+      self.credentials.include?('superuser')
+    end
+    
+    def short_credentials
+      result = ""
+      result << 'E' if self.can_edit?
+      result << 'A' if self.is_admin?
+      result << 'S' if self.is_superuser?
+      result
+    end
+    
+    def save(opts = {})
+      commit_actor = opts[:actor] || self
       index = Stewiki.repo.index
       index.read_tree('master')
       index.add("users/#{self.email}", self.to_json)
-      index.commit("Update user: #{self.email}", [Stewiki.repo.commits.first], self, nil, 'master')
+      index.commit("Update user: #{self.email}", [Stewiki.repo.commits.first], commit_actor, nil, 'master')
     end
     
     def to_json
-      [self.name, self.email, self.crypted_password].to_json
+      [self.name, self.email, self.crypted_password, self.credentials].to_json
+    end
+
+    def inspect
+      %Q{#<Stewiki::User "#{@name} <#{@email}>">}
     end
   end
   
