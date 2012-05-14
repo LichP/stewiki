@@ -21,8 +21,10 @@ Gem::Specification.new do |s|
   s.bindir = 'bin'
   s.executables = 'stewiki'
 
-  s.add_dependency "sinatra", "~> 1.2"
-  s.add_dependency "grit", "~> 2.4"
-  s.add_dependency "redcarpet", "~> 1.17"
-  s.add_dependency "shield", "~> 0.1"
+  s.add_dependency "sinatra", ">= 1.2"
+  s.add_dependency "haml", ">= 3.1"
+  s.add_dependency "grit", ">= 2.4"
+  s.add_dependency "redcarpet", ">= 1.17"
+  s.add_dependency "shield", ">= 0.1"
+  s.add_dependency "rack-flash3", ">= 1.0"
 end
