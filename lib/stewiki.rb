@@ -10,7 +10,11 @@ module Stewiki
   @repo_path_default = File.join(ENV['HOME'], ".stewiki/wikidata.git")
   
   def self.repo_path
-    @repo_path_default
+    @repo_path ||= @repo_path_default
+  end
+  
+  def self.repo_path=(new_path)
+    @repo_path = new_path
   end
   
   def self.repo
