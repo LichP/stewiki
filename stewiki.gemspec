@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir[
     "lib/**/*.rb",
+    "lib/stewiki/server/**/*",
     "bin/*",
     "README*",
     "LICENSE",
