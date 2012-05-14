@@ -9,4 +9,9 @@
   = haml :titlebar
   = haml :sidebar
 
-  = yield
+  .contentarea
+    - %w[notice error warning alert info].each do |key|
+      - if flash[key]
+        %div{:id => key,:class => 'flash'}= flash[key]
+
+    = yield

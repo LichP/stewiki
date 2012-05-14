@@ -1,9 +1,8 @@
-.contentarea
-  - unless @page.current?
-    %p.version
-      Version #{@page.selected_version_id_abbrev},
-      authored #{@page.selected_version_authored_date}
-      by #{@page.selected_version_author}
-  - unless @page.titled?
-    %h1= @title
-  ~ @page.render
+- unless @page.current?
+  %p.version
+    Version #{@page.selected_version_id_abbrev},
+    authored #{@page.selected_version_authored_date}
+    by #{@page.selected_version_author}
+- unless @page.titled?
+  %h1= @title
+~ @page.render

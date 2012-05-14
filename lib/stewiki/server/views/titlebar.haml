@@ -4,18 +4,22 @@
     .lowerfloat
       %a{:href => url("/page/Home")} Home
       |
-      - if @user
-        Logged in as #{@user.name}
+      - if user
+        Logged in as #{user.name}
         |
         %a{:href => url("/logout")} Logout
+        - if user.is_admin?
+          |
+          %a{:href => url("/users")} Users
       - else
         %a{:href => url("/login")} Login
-      
-    Last modified: #{@page.last_modified}; Commit:
-    %a{:href => url("/page/#{params[:pagename]}/#{@page.last_commit_abbrev}")}= @page.last_commit_abbrev
-    |
-    %a{:href => url("/page/#{params[:pagename]}")} Read
-    |
-    %a{:href => url("/edit/#{params[:pagename]}")} Edit
-    |
-    %a{:href => url("/history/#{params[:pagename]}")} History
+    
+    - if @page
+      Last modified: #{@page.last_modified}; Commit:
+      %a{:href => url("/page/#{params[:pagename]}/#{@page.last_commit_abbrev}")}= @page.last_commit_abbrev
+      |
+      %a{:href => url("/page/#{params[:pagename]}")} Read
+      |
+      %a{:href => url("/edit/#{params[:pagename]}")} Edit
+      |
+      %a{:href => url("/history/#{params[:pagename]}")} History

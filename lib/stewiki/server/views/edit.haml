@@ -1,12 +1,11 @@
-.contentarea
-  %h1= @title
-  .editform
-    %form{:action => url("/edit/" + params[:pagename]), :method => "POST"}
-      %p
-        %textarea#content{:rows => "20", :cols => "80", :name => "content"}= @page.content
-      %p
-        .commitfield
-          Commit message:
-          %input#commit_message{:type => "text", :name => "commit_message", :value => @page.default_commit_message}
-        .savebutton
-          %input{:type => "submit", :value => "Save"}
+%h1= @title
+.editform
+  %form{:action => url("/edit/" + params[:pagename]), :method => "POST"}
+    %p
+      %textarea#content{:rows => "20", :cols => "80", :name => "content"}= @page.content
+    %p
+      .commitfield
+        Commit message:
+        %input#commit_message{:type => "text", :name => "commit_message", :value => @page.default_commit_message}
+      .savebutton
+        %input{:type => "submit", :value => "Save"}

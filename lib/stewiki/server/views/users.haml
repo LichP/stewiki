@@ -1,0 +1,23 @@
+%h1 Users
+
+%p Credentials:
+
+%dl.credentials
+  %dt E
+  %dd Editor
+  %dt A
+  %dd Admin
+  %dt S
+  %dd Superuser
+
+%table.credentials
+  %tr
+    %th Name
+    %th Email
+    %th Credentials
+  - @users.each do |wiki_user|
+    %tr
+      %td= wiki_user.name
+      %td= wiki_user.email
+      %td
+        %a{:href => url("/user/credentials/" + escape_path(wiki_user.email))}= wiki_user.short_credentials

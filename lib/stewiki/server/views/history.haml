@@ -1,11 +1,10 @@
-.contentarea
-  %h1= @title
-  - @page.commits.each do |commit|
-    %h3 #{commit.authored_date}
-    %p
-      Commit
-      %a{:href => url("/page/#{params[:pagename]}/#{commit.id_abbrev}")}= commit.id_abbrev
-      , by
-      %a{:href => "mailto:#{commit.author.email}"}= commit.author.name
-    %ul
-      %li= commit.message
+%h1= @title
+- @page.commits.each do |commit|
+  %h3 #{commit.authored_date}
+  %p
+    Commit
+    %a{:href => url("/page/#{params[:pagename]}/#{commit.id_abbrev}")}= commit.id_abbrev
+    , by
+    %a{:href => "mailto:#{commit.author.email}"}= commit.author.name
+  %ul
+    %li= commit.message
