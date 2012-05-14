@@ -129,8 +129,8 @@ class Stewiki::Server < Sinatra::Base
     edit_credentials_checks(user_to_edit)
 
     if params[:superuser] && !user.is_superuser?
-        flash[:error] = "You do not have permission to set superuser credentials."
-        redirect to('/user/credentials/' + params[:email])
+      flash[:error] = "You do not have permission to set superuser credentials."
+      redirect to('/user/credentials/' + params[:email])
     end
     
     new_credentials = []
@@ -141,7 +141,53 @@ class Stewiki::Server < Sinatra::Base
     user_to_edit.credentials = new_credentials
     user_to_edit.save(:actor => user)    
     
-    flash[:info] = "Successfully updated credentials of #{user_to_edit}."
+    flash[:info] = "Successfully updated credentials of #{user_to_edit.name}."
     redirect to('/users')
+  end
+  
+  get "/user/add" do
+    ensure_is_admin("You do not have permission to add new Users.")
+    
+    haml :user_add
+  end
+
+  post "/user/add" do
+    ensure_is_admin("You do not have permission to add new Users.")
+    
+    form_errors = []
+    
+    [:name, :email, :password].each do |field|
+      form_errors << "#{field.to_s.capitalize} field is required" unless params[field] != ""
+    end
+    
+    if params[:password] != params[:confirm_password]
+      form_errors << "Password and Confirm Password do not match"
+    end
+    
+    if form_errors.length > 0
+      error_markup = "<ul>"
+      form_errors.each { |error| error_markup << "<li>#{error}</li>" }
+      error_markup << "</ul>"
+      flash[:error] = error_markup
+      return haml :user_add
+    end
+    
+    new_credentials = []
+    new_credentials << 'edit'      if params[:edit]
+    new_credentials << 'admin'     if params[:admin]
+    new_credentials << 'superuser' if params[:superuser] && user.is_superuser?
+    
+    if params[:superuser] && !user.is_superuser?
+      flash[:error] = "You do not have permission to set superuser credentials."
+    end
+    
+    # Should validate email address, will do this when refactoring validation in to model
+    new_user = Stewiki::User.new(params[:name], params[:email])
+    new_user.password = params[:password]
+    new_user.credentials = new_credentials
+    new_user.save(:actor => user)
+    
+    flash[:notice] = "Successfully created user #{new_user.name}"
+    redirect to("/users")
   end
 end

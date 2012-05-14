@@ -21,3 +21,6 @@
       %td= wiki_user.email
       %td
         %a{:href => url("/user/credentials/" + escape_path(wiki_user.email))}= wiki_user.short_credentials
+
+%p
+  %a{:href => url("/user/add")} Add New User

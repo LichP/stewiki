@@ -1,0 +1,36 @@
+%h1 Add New User
+
+%form{:action => "/user/add", :method => 'post'}
+  %table
+    %tr
+      %th Name
+      %td
+        %input{:type => 'text', :name => 'name', :value => params[:name]}
+    %tr
+      %th Email
+      %td
+        %input{:type => 'text', :name => 'email', :value => params[:email]}
+    %tr
+      %th Password
+      %td
+        %input{:type => 'password', :name => 'password'}
+    %tr
+      %th Confirm Password
+      %td
+        %input{:type => 'password', :name => 'confirm_password'}
+    %tr
+      %th Edit
+      %td
+        %input{:type => 'checkbox', :name => 'edit', :value => 1, :checked => params[:edit] }
+    %tr
+      %th Admin
+      %td
+        %input{:type => 'checkbox', :name => 'admin', :value => 1, :checked => params[:admin] }
+    - if user.is_superuser?
+      %tr
+        %th Superuser
+        %td
+          %input{:type => 'checkbox', :name => 'superuser', :value => 1, :checked => params[:superuser] }
+
+  %p
+    %input{:type => 'submit', :value => 'Add'}
