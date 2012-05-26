@@ -21,16 +21,16 @@
     %tr
       %th Edit
       %td
-        %input{:type => 'checkbox', :name => 'edit', :value => 1, :checked => params[:edit] }
+        %input{:type => 'checkbox', :name => 'credentials[]', :value => 'edit', :checked => params[:edit] }
     %tr
       %th Admin
       %td
-        %input{:type => 'checkbox', :name => 'admin', :value => 1, :checked => params[:admin] }
+        %input{:type => 'checkbox', :name => 'credentials[]', :value => 'admin', :checked => params[:admin] }
     - if user.is_superuser?
       %tr
         %th Superuser
         %td
-          %input{:type => 'checkbox', :name => 'superuser', :value => 1, :checked => params[:superuser] }
+          %input{:type => 'checkbox', :name => 'credentials[]', :value => 'superuser', :checked => params[:superuser] }
 
   %p
     %input{:type => 'submit', :value => 'Add'}

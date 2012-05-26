@@ -4,6 +4,7 @@ require 'redcarpet'
 require 'grit'
 require 'json'
 require 'shield'
+require 'scrivener'
 
 module Stewiki
   @renderers = {}
@@ -33,9 +34,10 @@ module Stewiki
   end
   
   class User < Grit::Actor
-    attr_accessor :crypted_password, :credentials
     include Shield::Model
     
+    attr_accessor :crypted_password, :credentials
+
     class << self
       def fetch(email)
         user_blob = Stewiki.repo.tree/("users/#{email}")
@@ -63,6 +65,10 @@ module Stewiki
     end
     
     alias_method :id, :email
+    
+    def credentials=(*tokens)
+      @credentials = tokens.flatten & ['edit', 'admin', 'superuser']
+    end
 
     def can_edit?
       self.credentials.include?('edit')
@@ -98,6 +104,30 @@ module Stewiki
 
     def inspect
       %Q{#<Stewiki::User "#{@name} <#{@email}>">}
+    end
+  end
+  
+  class NewUser < Scrivener
+    attr_accessor :name
+    attr_accessor :email
+    attr_accessor :password
+    attr_accessor :confirm_password
+    attr_accessor :credentials
+  
+    def validate
+      assert_present :name
+      assert_present :email
+      assert_email   :email
+      assert_present :password
+      assert password == confirm_password, [:confirm_password, :not_matching]
+    end
+    
+    def save_as_stewiki_user(opts = {})
+      return unless self.valid?
+      new_user = Stewiki::User.new(self.name, self.email)
+      new_user.password = self.password
+      new_user.credentials = self.credentials
+      new_user.save(opts)
     end
   end
   

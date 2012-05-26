@@ -28,4 +28,5 @@ Gem::Specification.new do |s|
   s.add_dependency "redcarpet", ">= 1.17"
   s.add_dependency "shield", ">= 0.1"
   s.add_dependency "rack-flash3", ">= 1.0"
+  s.add_dependency "scrivener", ">= 0.0.3"
 end
