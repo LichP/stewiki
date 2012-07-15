@@ -1,0 +1,29 @@
+!!!
+%html{html_attrs(lang = 'en-GB')}
+
+%head
+  %title= @title
+  %link{:rel => "stylesheet", :type => "text/css", :href => url("/style/main.css")}
+
+%body
+  .titlebar
+    %h2.upper Stewiki: A personal wiki
+
+  .contentarea
+    %h1 Error: Invalid Git Repository
+    %p
+      The filesystem location specified by
+      %em
+        Stewiki.repo_path
+      is not a valid Git repository. If you have customised this setting (e.g.
+      in your
+      %em
+        config.ru
+      rackup file), please check you have set it correctly.
+    %p
+      If
+      %em
+        Stewiki.repo_path
+      has been correctly set and is pointing at what should be a valid
+      repository, you may need to check the integrity / validity of the
+      repository to determine the cause of the problem.

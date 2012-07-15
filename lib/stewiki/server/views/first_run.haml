@@ -1,0 +1,47 @@
+!!!
+%html{html_attrs(lang = 'en-GB')}
+
+%head
+  %title= @title
+  %link{:rel => "stylesheet", :type => "text/css", :href => url("/style/main.css")}
+
+%body
+  .titlebar
+    %h2.upper Stewiki: A personal wiki
+
+  .contentarea
+    %h1 Welcome to Stewiki!
+    %p
+      The git repository named in
+      %em Stewiki.repo_path
+      doesn't exist yet - looks like this is your first run! If you would like
+      to initialize the repository, setup your wiki, and create your wiki
+      superuser account, fill in the form below.
+    %p
+      If you weren't expecting to see this page (e.g. because your wiki should
+      already exist), you need to explicitly set
+      %em Stewiki.repo_path
+      (e.g. in your config.ru) and ensure it is set to the correct
+      filesystem location.
+
+    %form{:action => "/firstrun", :method => 'post'}
+      %table
+        %tr
+          %th Your Name
+          %td
+            %input{:type => 'text', :name => 'name', :value => params[:name]}
+        %tr
+          %th Your Email
+          %td
+            %input{:type => 'text', :name => 'email', :value => params[:email]}
+        %tr
+          %th Password
+          %td
+            %input{:type => 'password', :name => 'password'}
+        %tr
+          %th Confirm Password
+          %td
+            %input{:type => 'password', :name => 'confirm_password'}
+
+      %p
+        %input{:type => 'submit', :value => 'Go'}

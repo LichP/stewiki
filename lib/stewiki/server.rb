@@ -9,6 +9,7 @@ class Stewiki::Server < Sinatra::Base
   use Shield::Middleware, "/login"
 
   set :root, File.dirname(__FILE__)  + '/server'
+  set :show_exceptions, :after_handler
 
   helpers Shield::Helpers
   
@@ -57,13 +58,68 @@ class Stewiki::Server < Sinatra::Base
     end
   end
   
+  # Error handling
+  error Grit::NoSuchPathError do
+    redirect to('/firstrun')
+  end
+  
+  error Grit::InvalidGitRepositoryError do
+    haml :invalid_repo, layout: false
+  end
+
+  # Root
   get "/" do
     redirect to('/page/Home')
+  end
+  
+  # First run routes
+  get "/firstrun" do
+     begin
+       Stewiki.repo
+     rescue Grit::NoSuchPathError
+       return haml :first_run, layout: false
+     end
+     flash[:error] = "Not performing First Run on already initialized repository."
+     redirect to('/')
+  end
+  
+  post "/firstrun" do
+     begin
+       Stewiki.repo
+     rescue Grit::NoSuchPathError
+       # Process form
+       new_user = Stewiki::NewUser.new(params)
+       unless new_user.valid?
+         error_markup = "<ul>"
+         new_user.errors.each_pair do |field, errors|
+           errors.each do |error|
+             error_markup << "<li>#{prettify(field)} #{user_error_text[error]}</li>"
+           end
+         end
+         error_markup << "</ul>"
+         flash.now[:error] = error_markup
+         return haml :first_run, layout: false
+       end
+
+       # Create repo
+       Stewiki.init_repo
+       
+       # Save user
+       new_user.credentials = ['edit', 'admin', 'superuser']
+       saved_user = new_user.save_as_stewiki_user(actor: Stewiki.first_run_actor)
+       
+       # Login, redirect to edit of home page
+       login(Stewiki::User, new_user.email, new_user.password)
+       redirect to('/edit/Home')
+     end
+     flash[:error] = "Not performing First Run on already initialized repository."
+     redirect to('/')
   end
   
   # Login routes
   get "/login" do
     haml :login
+      flash.now[:error] = error_markup
   end
 
   post "/login" do
@@ -190,4 +246,5 @@ class Stewiki::Server < Sinatra::Base
       haml :user_add
     end
   end
+  
 end

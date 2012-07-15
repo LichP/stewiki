@@ -22,8 +22,34 @@ module Stewiki
     @repo ||= Grit::Repo.new(repo_path)
   end
   
+  def self.init_repo
+    # Ensure the repo path is not otherwise engaged
+    raise "Cannot init repo: File/directory already exists at #{self.repo_path}" if File.exist?(repo_path)
+    
+    # If the path ends in .git, initialise bare, otherwise initialise with working tree
+    warn repo_path
+    warn File.extname(repo_path)
+    if File.extname(repo_path) == '.git'
+      Grit::Repo.init_bare(repo_path)
+    else
+      Grit::Repo.init(repo_path)
+    end
+    
+    # Do initial setup
+    index = repo.index
+    index.add("init", Time.now.to_s)
+    index.commit("Initialize Stewiki Repo", nil, first_run_actor, nil, 'master')
+    
+    # Return the repo
+    repo
+  end
+  
   def self.default_actor(user = self.repo.config['user.name'], email = self.repo.config['user.email'])
     Grit::Actor.new(user, email)
+  end
+  
+  def self.first_run_actor
+    Grit::Actor.new("Stewiki First Run", "stewiki@localhost")
   end
   
   def self.renderer(renderer_sym)
@@ -128,6 +154,7 @@ module Stewiki
       new_user.password = self.password
       new_user.credentials = self.credentials
       new_user.save(opts)
+      new_user
     end
   end
   
